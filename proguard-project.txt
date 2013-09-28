@@ -1,0 +1,79 @@
+# To enable ProGuard in your project, edit project.properties
+# to define the proguard.config property as described in that file.
+#
+# Add project specific ProGuard rules here.
+# By default, the flags in this file are appended to flags specified
+# in ${sdk.dir}/tools/proguard/proguard-android.txt
+# You can edit the include path and order by changing the ProGuard
+# include property in project.properties.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+
+# Add any project specific keep options here:
+
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
+
+
+#指定数量的优化能执行
+-optimizationpasses 5
+
+#混淆时不产生形形色色的类型
+-dontusemixedcaseclassnames
+
+#不预校验
+-dontpreverify
+
+#输出生成信息
+-verbose
+
+#优化选项
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+#指定不去忽略非公共的库类
+-dontskipnonpubliclibraryclasses
+
+#指定不去忽略非公共的库类成员
+-dontskipnonpubliclibraryclassmembers
+
+-libraryjars ./libs/baidumapapi_v2_1_2.jar
+-libraryjars ./libs/locSDK_3.3.jar
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+
+# ------ 保护百度地址jar包 --------
+-keep class com.baidu.mapapi.** { *; }
+-dontwarn com.baidu.mapapi.**
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclasseswithmembernames class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembernames class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
