@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +22,8 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.colin.android.mail.Mail;
 
 public class CrashHandler implements UncaughtExceptionHandler {
 
@@ -153,23 +156,88 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		
 		return errInfo;
 	}
+	
+	private void writeToFile2(Thread td, Throwable ex) {
+		if(ex != null){
+			File errLog = getErrDir();
+			errLog = new File(errLog, ERR_LOG_NAME);
 
-//	private boolean sendToMail(String body) {
-//		Mail m = new Mail("", "");
-//
-//		String[] toArr = { ""};
-//		m.setTo(toArr);
-//		m.setFrom("");
-//		m.setSubject("crash log");
-//		m.setBody(body);
-//		try {
-//			return m.send();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
+			if (!errLog.exists()) {
+				try {
+					errLog.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				if (errLog.length() > ERR_LOG_SIZE) {
+					errLog.delete();
+				}
+			}
+
+			PrintWriter pw = null;
+			try {
+				FileOutputStream fos = new FileOutputStream(errLog, true);
+				pw = new PrintWriter(fos);
+				
+				
+				// write space
+				if (errLog.length() != 0) {
+					pw.write("\r\n\r\n");
+				}
+
+				// write currtime
+				pw.write(getCurrTime());
+
+				// write device
+				pw.write(getUEPROF());
+				
+				//write clientInfo
+				pw.write(getClientInfo());
+
+				// wirte thread
+				if (td != null) {
+					pw.write(td.toString());
+				}
+				pw.write("\r\n");
+
+				int times = 1;
+				while (ex != null) {
+					Log.e(TAG, "times " + times);
+					ex.printStackTrace(pw);
+					ex = ex.getCause();
+					times++;
+				}
+				pw.flush();
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally{
+				if(pw != null){
+					pw.close();
+				}
+			}
+		}
+		
+	}
+
+	private boolean sendToMail(String body) {
+		Mail m = new Mail("", "");
+
+		String[] toArr = { ""};
+		m.setTo(toArr);
+		m.setFrom("");
+		m.setSubject("crash log");
+		m.setBody(body);
+		try {
+			return m.send();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	private String getUEPROF() {
 		StringBuilder mBuffer = new StringBuilder();
