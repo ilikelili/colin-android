@@ -24,16 +24,17 @@
             android:name="com.baidu.map.activity.BaiduMapActivity"
             android:screenOrientation="sensor"
             android:configChanges="keyboardHidden|orientation">
+        </activity>
+        
+        <activity android:name="com.baidu.map.activity.PoiDetailActivity"></activity>
+        
+        <activity android:name="com.zxing.activity.BarCodeTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name="com.baidu.map.activity.PoiDetailActivity"></activity>
-        
-        <activity android:name="com.zxing.activity.BarCodeTestActivity"></activity>
         
         <activity android:name="com.zxing.activity.CaptureActivity"></activity>
         
