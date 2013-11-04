@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Display;
@@ -31,7 +30,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 	private static final int ERR_LOG_SIZE = 2 * 1024 * 1024;
 
-	private static final String ERR_LOG_PATH = "/com/colin/logs/";
+	private static final String ERR_LOG_PATH = "/logs/";
 	
 	private static final String ERR_LOG_NAME = "crashlog.txt";
 
@@ -303,20 +302,13 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	}
 
 	private File getErrDir() {
-		File file = null;
+		File file = Config.getCacheFile(mContext);
+		file = new File(file, ERR_LOG_PATH);
 
-		String state = Environment.getExternalStorageState();
-		if (state.equals(Environment.MEDIA_MOUNTED)) {
-			File dir = Environment.getExternalStorageDirectory();
-			file = new File(dir, ERR_LOG_PATH);
-		} else {
-			file = mContext.getFilesDir();
-		}
-
-		if (!file.exists()) {
+		if(!file.exists()){
 			file.mkdirs();
 		}
-
+		
 		return file;
 	}
 
