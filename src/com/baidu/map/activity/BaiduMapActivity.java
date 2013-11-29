@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +82,7 @@ public class BaiduMapActivity extends Activity implements OnClickListener, MKMap
 		searchService = new SearchService(mapMgr);
 		
 		initView();
+		
 	}
 	
 	/**
