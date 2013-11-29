@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cmcc_mocam" default="buildAll">
+
+	<!-- The local.properties file is created and updated by the 'android'
+     tool.
+     It contains the path to the SDK. It should *NOT* be checked into
+     Version Control Systems. -->
+
+
+
+
+	<!-- 版本名称 -->
+	<property name="build.version.name" value="1065840493" />
+	<!-- 版本号 -->
+	<property name="build.version.code" value="30" />
+	<!-- TSM服务器地址 -->
+	<property name="build.tsm.server" value="http://218.206.179.248:8088/" />
+	<!-- 短信中心号码 -->
+	<property name="build.sms.number" value="10658474" />
+	<!-- 屏蔽银联功能 -->
+	<property name="disable.union" value="true" />
+	<!-- 启动LOG功能 -->
+	<property name="disable.log" value="true" />
+	<!-- server path -->
+	<property name="server.path" value="tsm/html/mocam/?m=handler2" />
+
+	<!-- 编译目录 -->
+	<property name="out.dir" value="build" />
+	<!-- 输出目录 -->
+	<property name="out.dist.dir" value="dist" />
+
+	<property name="out.android.manifest" value="${out.dir}/AndroidManifest.xml" />
+
+
+	<property name="java.encoding" value="utf-8" />
+
+	<property name="boot.class.path" value="bootlibs" />
+
+	<property file="ant.properties" />
+
+
+
+	<loadproperties srcFile="local.properties" />
+
+	<loadproperties srcFile="project.properties" />
+
+	<!-- 添加openMobileAPI系统包 -->
+	<path id="myandroid.target.classpath">
+		<path refid="android.target.classpath" />
+		<fileset dir="${boot.class.path}" includes="*.jar" />
+	</path>
+
+	<!-- The build.properties file can be created by you and is never touched
+         by the 'android' tool. This is the place to change some of the
+         default property values used by the Ant rules.
+         Here are some properties you may want to change/update:
+
+         source.dir
+             The name of the source directory. Default is 'src'.
+         out.dir
+             The name of the output directory. Default is 'bin'.
+
+         Properties related to the SDK location or the project target should
+         be updated using the 'android' tool with the 'update' action.
+
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems.
+
+         -->
+
+
+	<!-- The default.properties file is created and updated by the 'android'
+         tool, as well as ADT.
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems. -->
+
+	<!-- Custom Android task to deal with the project target, and import the
+         proper rules.
+         This requires ant 1.6.0 or above. -->
+
+
+
+
+
+	<!-- extension targets. Uncomment the ones where you want to do custom work
+     in between standard targets -->
+
+
+
+	<!--
+    <target name="-pre-build">
+    </target>
+    <target name="-pre-compile">
+    </target>
+
+    [This is typically used for code obfuscation.
+     Compiled code location: ${out.classes.absolute.dir}
+     If this is not done in place, override ${out.dex.input.absolute.dir}]
+    <target name="-post-compile">
+    </target>
+-->
+
+	<target name="clean">
+		<delete dir="${out.dir}" />
+	</target>
+
+	<target name="-init" depends="clean">
+		<tstamp />
+		<mkdir dir="${out.dir}" />
+		<mkdir dir="${out.dist.dir}" />
+		<copy tofile="${out.android.manifest}" file="AndroidManifest.xml" />
+
+	</target>
+
+
+
+	<target name="-pre-build">
+		<echo>change AndroidManifest.xml ${build.version.code} ,${build.version.name}</echo>
+		<echo>change AndroidManifest.xml ${build.tsm.server} ,${build.sms.number}</echo>
+		<!--  修改版本号 -->
+		<replaceregexp file="${out.android.manifest}" match='android:versionCode="(.*)"' replace='android:versionCode="${build.version.code}"' byline="false" />
+		<!--  修改版本名称 -->
+		<replaceregexp file="${out.android.manifest}" match='android:versionName="(.*)"' replace='android:versionName="${build.version.name}"' byline="false" />
+		<!--  替换TSM服务地址 -->
+
+		<replaceregexp file="${out.android.manifest}" match='android:name="TSM_SER" android:value="(.*)"' replace='android:name="TSM_SER" android:value="${build.tsm.server}"' byline="false" />
+		<!--  替换短信中心号码 -->
+		<replaceregexp file="${out.android.manifest}" match='android:name="SMS_NUM" android:value="(.*)"' replace='android:name="SMS_NUM" android:value="${build.sms.number}"' byline="false" />
+
+		<!-- 替换屏蔽银联功能  -->
+		<replaceregexp file="${out.android.manifest}" match='android:name="DISABLE_UNION" android:value="(.*)"' replace='android:name="DISABLE_UNION" android:value="${disable.union}"' byline="false" />
+		
+		<!-- 替换debug log功能  -->
+		<replaceregexp file="${out.android.manifest}" match='android:name="DISABLE_LOG" android:value="(.*)"' replace='android:name="DISABLE_LOG" android:value="${disable.log}"' byline="false" />
+		
+		<!-- 替换server path功能  -->
+		<replaceregexp file="${out.android.manifest}" match='android:name="SERVER_PATH" android:value="(.*)"' replace='android:name="SERVER_PATH" android:value="${server.path}"' byline="false" />
+	</target>
+	
+	<!-- 最新版本号 -->
+	<property name="newest.code" value="20131401" />
+
+	<!-- 发布所有版本 -->
+	<target name="buildAll" depends="-init">
+	    
+	    <echo>研究院_release 0.9.0_NT-2013.4.20</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.248:8080/" />
+			<param name="build.sms.number" value="1065812309" />
+			<param name="build.version.name" value="LTE" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="false" />
+			<param name="disable.log" value="false" />
+		</antcall>
+	    
+	    <!-- 
+	    <echo>基地环境_release 0.9.0_UAT-2013.4.19</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://211.138.236.210:5080/" />
+			<param name="build.sms.number" value="106584454" />
+			<param name="build.version.name" value="0.9.0_UAT" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="false" />
+			<param name="disable.log" value="false" />
+			<param name="server.path" value="html/mocam/?m=handler2" />
+		</antcall>
+	     -->
+	    
+		<!-- 
+		<echo>show_release 0.1.0-new</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.214:8088/" />
+			<param name="build.sms.number" value="1065840493" />
+			<param name="build.version.name" value="0.1.0_S" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="false" />
+			<param name="disable.log" value="false" />
+			<param name="server.path" value="tsm/html/mocam/?m=handler2" />
+		</antcall>
+		
+	    <echo>show_release 0.0.1-UM</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.246:9003/" />
+			<param name="build.sms.number" value="1065840493" />
+			<param name="build.version.name" value="0.0.1_UM" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="true" />
+			<param name="disable.log" value="false" />
+		</antcall>
+	    
+	   
+	    <echo>test_release 0.1.0</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.248:8088/" />
+			<param name="build.sms.number" value="1065840493" />
+			<param name="build.version.name" value="0.1.0_T" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="true" />
+			<param name="disable.log" value="false" />
+		</antcall>
+		
+		<echo>union_release 0.5.0</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.201:8080/" />
+			<param name="build.sms.number" value="1065840493" />
+			<param name="build.version.name" value="0.5.0_U" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="false" />
+			<param name="disable.log" value="true" />
+		</antcall>
+				
+		<echo>show_release 0.1.0-old</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.248:8080/" />
+			<param name="build.sms.number" value="1065840493" />
+			<param name="build.version.name" value="0.1.0_S" />
+			<param name="build.version.code" value="${newest.code}" />
+			<param name="disable.union" value="true" />
+			<param name="disable.log" value="true" />
+		</antcall>
+		
+		<echo>研究院AC测试TSM平台</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://218.206.179.248:8080/" />
+			<param name="build.sms.number" value="1065840493" />
+			<param name="build.version.name" value="cmcc_ac_test_1.0" />
+		</antcall>
+		<echo>基地测试TSM平台</echo>
+		<antcall target="release">
+			<param name="build.tsm.server" value="http://111.8.9.62:8080/" />
+			<param name="build.sms.number" value="10658474" />
+			<param name="build.version.name" value="huna_1.0" />
+		</antcall>
+		-->
+
+	</target>
+
+
+	<!-- 发布默认版本 -->
+	<target name="build" depends="-init,release" />
+
+
+
+
+	<!-- 重载-code-gen方法 ,使用指定manifest文件. -->
+	<!-- Code Generation: compile resources (aapt -> R.java), aidl, renderscript -->
+	<target name="-code-gen">
+		<do-only-if-manifest-hasCode elseText="hasCode = false. Skipping aidl/renderscript/R.java">
+			<echo>----------</echo>
+			<echo>Handling aidl files...</echo>
+			<aidl executable="${aidl}" framework="${android.aidl}" genFolder="${gen.absolute.dir}">
+				<source path="${source.absolute.dir}" />
+			</aidl>
+
+			<!-- renderscript generates resources so it must be called before aapt -->
+			<echo>----------</echo>
+			<echo>Handling RenderScript files...</echo>
+			<renderscript executable="${renderscript}" framework="${android.rs}" genFolder="${gen.absolute.dir}" resFolder="${resource.absolute.dir}/raw" targetApi="${target.api}">
+				<source path="${source.absolute.dir}" />
+			</renderscript>
+
+			<echo>----------</echo>
+			<echo>Handling Resources...</echo>
+			<aapt executable="${aapt}" command="package" verbose="${verbose}" manifest="${out.android.manifest}" androidjar="${android.jar}" rfolder="${gen.absolute.dir}" nonConstantId="${android.library}" projectLibrariesResName="project.libraries.res" projectLibrariesPackageName="project.libraries.package">
+				<res path="${resource.absolute.dir}" />
+			</aapt>
+		</do-only-if-manifest-hasCode>
+	</target>
+
+
+	<property name="plug-in.dir" value="plug-in" />
+	<property name="plug_in.absolute.dir" location="${plug-in.dir}" />
+
+
+	<target name="-compile" depends="-build-setup, -pre-build, -code-gen, -pre-compile">
+		<if condition="${manifest.hasCode}">
+			<then>
+				<!-- If android rules are used for a test project, its classpath should include
+	                     tested project's location -->
+				<condition property="extensible.classpath" value="${tested.project.absolute.dir}/bin/classes" else=".">
+					<isset property="tested.project.absolute.dir" />
+				</condition>
+				<condition property="extensible.libs.classpath" value="${tested.project.absolute.dir}/libs" else="${jar.libs.dir}">
+					<isset property="tested.project.absolute.dir" />
+				</condition>
+				<javac encoding="${java.encoding}" source="${java.source}" target="${java.target}" debug="true" extdirs="" destdir="${out.classes.absolute.dir}" bootclasspathref="myandroid.target.classpath" verbose="${verbose}" classpath="${extensible.classpath}" classpathref="jar.libs.ref">
+
+					<src path="${source.absolute.dir}" />
+					<src path="${gen.absolute.dir}" />
+					<src path="${plug_in.absolute.dir}"/>
+					<classpath>
+						<fileset dir="${extensible.libs.classpath}" includes="*.jar" />
+					</classpath>
+
+				</javac>
+			</then>
+			<else>
+				<echo>hasCode = false. Skipping...</echo>
+			</else>
+		</if>
+	</target>
+
+	<!-- 重载-package-resources方法 ,使用指定manifest文件. -->
+	<target name="-package-resources" depends="-crunch">
+		<!-- only package resources if *not* a library project -->
+		<do-only-if-not-library elseText="Library project: do not package resources...">
+			<aapt executable="${aapt}" command="package" versioncode="${version.code}" versionname="${version.name}" debug="${build.is.packaging.debug}" manifest="${out.android.manifest}" assets="${asset.absolute.dir}" androidjar="${android.jar}" apkfolder="${out.absolute.dir}" nocrunch="${build.packaging.nocrunch}" resourcefilename="${resource.package.file.name}" resourcefilter="${aapt.resource.filter}" projectLibrariesResName="project.libraries.res" projectLibrariesPackageName="project.libraries.package" previousBuildType="${build.last.target}" buildType="${build.target}">
+				<res path="${out.res.absolute.dir}" />
+				<res path="${resource.absolute.dir}" />
+				<!-- <nocompress /> forces no compression on any files in assets or res/raw -->
+				<!-- <nocompress extension="xml" /> forces no compression on specific file extensions in assets and res/raw -->
+			</aapt>
+		</do-only-if-not-library>
+	</target>
+
+
+	<!-- Execute the Android Setup task that will setup some properties
+         specific to the target, and import the build rules files.
+
+         The rules file is imported from
+            <SDK>/platforms/<target_platform>/ant/ant_rules_r#.xml
+
+         To customize existing targets, there are two options:
+         - Customize only one target:
+             - copy/paste the target into this file, *before* the
+               <setup> task.
+             - customize it to your needs.
+         - Customize the whole script.
+             - copy/paste the content of the rules files (minus the top node)
+               into this file, *after* the <setup> task
+             - disable the import of the rules by changing the setup task
+               below to <setup import="false" />.
+             - customize to your needs.
+    -->
+
+	<import file="${sdk.dir}/tools/ant/build.xml" />
+
+	<target name="-set-release-mode" depends="-set-mode-check">
+		<property name="out.packaged.file" location="${out.dist.dir}/${ant.project.name}_${DSTAMP}${TSTAMP}_${build.version.name}_${newest.code}_unsigned.apk" />
+		<property name="out.final.file" location="${out.dist.dir}/${ant.project.name}_${DSTAMP}${TSTAMP}_${build.version.name}_${newest.code}.apk" />
+
+		<!-- record the current build target -->
+		<property name="build.target" value="release" />
+
+		<property name="build.is.instrumented" value="false" />
+
+		<!-- release mode is only valid if the manifest does not explicitly
+             set debuggable to true. default is false. -->
+		<xpath input="${out.android.manifest}" expression="/manifest/application/@android:debuggable" output="build.is.packaging.debug" default="false" />
+
+		<!-- signing mode: release -->
+		<property name="build.is.signing.debug" value="false" />
+
+		<if condition="${build.is.packaging.debug}">
+			<then>
+				<echo>*************************************************</echo>
+				<echo>****  Android Manifest has debuggable=true   ****</echo>
+				<echo>**** Doing DEBUG packaging with RELEASE keys ****</echo>
+				<echo>*************************************************</echo>
+			</then>
+			<else>
+				<!-- property only set in release mode.
+                     Useful for if/unless attributes in target node
+                     when using Ant before 1.8 -->
+				<property name="build.is.mode.release" value="true" />
+			</else>
+		</if>
+	</target>
+
+
+
+</project>
