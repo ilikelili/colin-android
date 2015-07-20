@@ -1,0 +1,1 @@
+Include Baidu Map, Zxing, OpenmobileApi
